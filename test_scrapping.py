@@ -47,16 +47,24 @@ if response.status_code == 200:
      
         return max([int(page.get_text()) for page in number_pages if page.get_text().isdigit()])
 
-    def get_all_list_recipes(url):      
-        list_recipe = []
+    def get_all_links_list_recipes(url):      
+        list_link_recipes = []
         number_pages= get_number_of_pages(url)
+        list_recipe_names = []
         
         for i in range(1 ,number_pages+1):
-            list_recipe.append(url+str(i))
-            pprint(list_recipe)
+            page_url = url + str(i)
+            page_content = requests.get(page_url).content
+            soup = BeautifulSoup(page_content, 'html.parser')
+            
+            recipes = soup.find_all("h4", class_="recipe-card__title")
+            for recipe in recipes:
+                list_recipe_names.append(recipe.get_text().strip())
+           
+        
+        pprint(list_recipe_names)   
 
-
-    get_all_list_recipes(url)
+    get_all_links_list_recipes(url)
 
 else:
     print("error")
