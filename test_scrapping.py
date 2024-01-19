@@ -38,15 +38,13 @@ if response.status_code == 200:
     def get_number_of_pages(url):
         response = requests.get(url)
         #soup = BeautifulSoup(response.content, 'html.parser')
-
         pagination = soup.find("nav", class_="af-pagination")
         if not pagination:
             return 0
-
         number_pages = pagination.find_all('a')
-     
         return max([int(page.get_text()) for page in number_pages if page.get_text().isdigit()])
-
+    
+    
     def get_all_links_list_recipes(url):      
         list_link_recipes = []
         number_pages= get_number_of_pages(url)
