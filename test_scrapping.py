@@ -2,6 +2,7 @@ import requests
 from bs4 import BeautifulSoup
 from pprint import pprint
 from tqdm import tqdm
+import os
 import csv
 
 
@@ -9,6 +10,7 @@ url = "https://www.marmiton.org/recettes/index/categorie/aperitif-ou-buffet/"
 
 
 headers = {"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"}
+
 
 def get_text_if_not_none(e):
     if e:
@@ -58,11 +60,14 @@ if response.status_code == 200:
             soup = BeautifulSoup(page_content, 'html.parser')
             
             recipes = soup.find_all("h4", class_="recipe-card__title")
-            for recipe in tqdm(recipes):
+            for recipe in recipes:
                 list_recipe_names.append(recipe.get_text().strip())
            
+        CUR_DIR = os.path.dirname(os.path.dirname(__file__))
+        LISTE_PATH = os.path.join(CUR_DIR, "listes_recettes.csv")
+        print(LISTE_PATH)
         headers = ["listes des recettes"]
-        with open('C:/Users/desti/OneDrive/Bureau/Cours dev/Python/test_recette.csv','w', newline='', encoding='utf-8') as f:
+        with open(LISTE_PATH,'w', newline='', encoding='utf-8') as f:
             writer = csv.writer(f)
             writer.writerow(headers)
             writer.writerows(list_recipe_names)
