@@ -29,24 +29,27 @@ if response.status_code == 200:
     #f.close
     soup = BeautifulSoup(html, 'html5lib')
 
-    #title = soup.find("h1").text
-    #recipe = get_text_if_not_none(soup.find("div",class_ = "recipe-step-list"))
+    def get_categories():
+        list_categories = []
+        list_categories = soup.find_all("a", class_="mrtn-header-subitem-link")
+        pprint(list_categories)
 
-    #ingredient
-    #div_ingredients = soup.find("div", class_="card-ingredient")
-    #e_ingredients = div_ingredients.find_all("span", class_="card-ingredient-title")
-    #for ingredient in e_ingredients:
-     #   print(ingredient)
-    
 
     def get_number_of_pages(url):
         response = requests.get(url)
-        #soup = BeautifulSoup(response.content, 'html.parser')
+        soup = BeautifulSoup(response.content, 'html.parser')
         pagination = soup.find("nav", class_="af-pagination")
         if not pagination:
             return 0
         number_pages = pagination.find_all('a')
         return max([int(page.get_text()) for page in number_pages if page.get_text().isdigit()])
+    
+    '''def get_all_recipes_name(url):
+        list_recipe_names = []
+        recipes_name = soup.find_all("h4", class_="recipe-card__title")
+        for recipe in recipes_name:
+            list_recipe_names.append(recipe.get_text().strip())
+        pprint((list_recipe_names))'''
     
     
     def get_all_links_list_recipes(url):      
@@ -59,11 +62,18 @@ if response.status_code == 200:
             page_content = requests.get(page_url).content
             soup = BeautifulSoup(page_content, 'html.parser')
             
-            recipes = soup.find_all("h4", class_="recipe-card__title")
-            for recipe in recipes:
+            recipes_name = soup.find_all("h4", class_="recipe-card__title")
+            link_recipes = soup.find_all("a", href=True, class_="recipe-card-link")
+
+            for recipe in recipes_name:
                 list_recipe_names.append(recipe.get_text().strip())
+
+            for link in link_recipes:
+                list_link_recipes.append(link['href'])
+        
+        pprint(len(list_link_recipes))
            
-        CUR_DIR = os.path.dirname(os.path.dirname(__file__))
+    '''  CUR_DIR = os.path.dirname(os.path.dirname(__file__))
         LISTE_PATH = os.path.join(CUR_DIR, "listes_recettes.csv")
         print(LISTE_PATH)
         headers = ["listes des recettes"]
@@ -71,7 +81,7 @@ if response.status_code == 200:
             writer = csv.writer(f)
             writer.writerow(headers)
             writer.writerows(list_recipe_names)
-        pprint("fichier csv créé")   
+        pprint("fichier csv créé")   '''
 
     get_all_links_list_recipes(url)
 
