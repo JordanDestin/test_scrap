@@ -1,7 +1,6 @@
 import requests
 from bs4 import BeautifulSoup
 from pprint import pprint
-from tqdm import tqdm
 import os
 import csv
 
@@ -31,9 +30,12 @@ if response.status_code == 200:
 
     def get_categories():
         list_categories = []
+        name_cat =  soup.find("li", class_="mrtn-header-menu-title").find("span")
         list_categories = soup.find_all("a", class_="mrtn-header-subitem-link")
-        pprint(list_categories)
+        for category in list_categories:
+            pprint(category.text)
 
+    get_categories()
 
     def get_number_of_pages(url):
         response = requests.get(url)
@@ -71,7 +73,7 @@ if response.status_code == 200:
             for link in link_recipes:
                 list_link_recipes.append(link['href'])
         
-        pprint(len(list_link_recipes))
+        pprint(list_link_recipes)
            
     '''  CUR_DIR = os.path.dirname(os.path.dirname(__file__))
         LISTE_PATH = os.path.join(CUR_DIR, "listes_recettes.csv")
@@ -83,7 +85,7 @@ if response.status_code == 200:
             writer.writerows(list_recipe_names)
         pprint("fichier csv créé")   '''
 
-    get_all_links_list_recipes(url)
+    #get_all_links_list_recipes(url)
 
 else:
     print("error")
